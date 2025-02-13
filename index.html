@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kalkulator Harga Kendaraan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background-color: #f4f7fc;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap; /* agar responsif */
+    }
+    .container {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px; /* Batas lebar */
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #4CAF50;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select, button, input {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #45A049;
+    }
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #333;
+      text-align: center;
+    }
+    .info {
+      font-size: 14px;
+      color: #555;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .info p {
+      margin: 10px 0;
+    }
+
+    /* Flexbox untuk dua kalkulator di kiri dan kanan */
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    .container.dark-mode {
+      background: #333;
+      color: #e0e0e0;
+    }
+    button.dark-mode {
+      background-color: #333;
+      color: #ffffff;
+    }
+
+    /* Menyembunyikan gambar jika di tampilan mobile */
+    @media (max-width: 768px) {
+      .flex-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .container {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <div class="flex-container">
+    <!-- Price Tools -->
+    <div class="container">
+      <h2>Vehicles Price</h2>
+      <div class="section">
+        <label for="kendaraan" class="label">Choose Vehicles:</label>
+        <select id="kendaraan"></select>
+      </div>
+
+      <div class="section">
+        <label for="upgrade" class="label">Total Up:</label>
+        <select id="upgrade">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <label for="stiker" class="label">Full Stickers Only</label>
+        <input type="checkbox" id="stiker">
+      </div>
+
+      <button onclick="hitungHarga()">Hitung Harga Kendaraan</button>
+      <div class="result" id="totalHarga"></div>
+    </div>
+
+    <!-- Mechanics Tools -->
+    <div class="container">
+      <h2>Mech Toolkit</h2>
+      <div class="section">
+        <label for="komponen" class="label">Input:</label>
+        <input type="number" id="komponen" placeholder="Total Komponen" />
+      </div>
+
+      <button onclick="hitungHargaKomponen()">Total</button>
+      <div class="result" id="totalHargaKomponen"></div>
+
+      <div class="info">
+        <p>0.55 / component</p>
+        <p>Car Repaint 80 Component</p>
+        <p>Bike Repair 40 Component</p>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+  <h3>JGRP COLOR ID</h3>
+  <img src="https://sampwiki.blast.hk/wroot/images2/7/7c/Carcolours_All.jpg" alt="Warna Kaleng" width="100%">
+
+  <div style="text-align: center; margin-top: 50px;">
+    <p>&copy; 2025 Made in 2025. Powered by Aryanuw</p>
+    <p>Follow me on <a href="https://instagram.com/aryanuw" target="_blank">Instagram @aryanuw</a></p>
+  </div>
+
+  <script>
+    const kendaraan = {
+      'Faggio': 550, 'Wayfarer': 750, 'BF-400': 1250, 'FCR-900': 5500, 'Freeway': 1000,
+      'PCJ-600': 1750, 'Sanchez': 950, 'Quad': 1000, 'Admiral': 1750, 'Alpha': 1850,
+      'Bobcat': 1250, 'Burrito': 950, 'Blade': 1100, 'Broadway': 850, 'Bravura': 1500,
+      'Buffalo': 2500, 'Bandito': 1750, 'Boxville': 1000, 'Blista Compact': 1500,
+      'Buccaneer': 800, 'Clover': 950, 'Cadrona': 850, 'Camper': 1250, 'Cheetah': 7500,
+      'Comet': 3500, 'Elegy': 3500, 'Esperanto': 1000, 'Euros': 2500, 'Emperor': 950,
+      'Elegant': 1400, 'Fortune': 950, 'Feltzer': 950, 'Flash': 2250, 'Glendale': 600,
+      'Greenwod': 1150, 'Hermes': 800, 'Hustler': 1000, 'Huntley': 1750, 'Intruder': 950,
+      'Journey': 950, 'Jester': 2500, 'Landstalker': 2000, 'Majestic': 950, 'Merit': 1150,
+      'Mesa': 1150, 'Moonbeam': 1250, 'Manana': 1600, 'Nebula': 1250, 'Oceanic': 950,
+      'Patriot': 2500, 'Picador': 995, 'Perenniel': 1000, 'Previon': 1500, 'Pony': 1000,
+      'Primo': 950, 'Premier': 1500, 'Phoenix': 2750, 'Rancher A': 1500, 'Rancher B': 1500,
+      'Regina': 995, 'Rumpo': 1000, 'Remington': 1150, 'Super GT': 7500, 'Sentinel': 1750,
+      'Stratum': 1500, 'Stallion': 1250, 'Stafford': 1250, 'Solair': 1250, 'Sultan': 5000,
+      'Savanna': 1150, 'Sadler': 650, 'Sunrise': 1500, 'Sabre': 750, 'Slamvan': 1400,
+      'Tampa': 650, 'Tornado': 750, 'Tahoma': 1500, 'Uranus': 2500, 'Virgo': 950,
+      'Voodoo': 1250, 'Vincent': 1250, 'Washington': 1500, 'Willard': 950, 'Walton': 350,
+      'Windsor': 1250, 'Yosemite': 1500, 'ZR-350': 2750, 'Dinghy': 750, 'Jetmax': 3500,
+      'Marquis': 10000, 'Reefer': 1250, 'Speeder': 2500, 'Squalo': 7500, 'Tropic': 5000
+    };
+
+    const kendaraanSelect = document.getElementById('kendaraan');
+    Object.keys(kendaraan).forEach(k => {
+      const option = document.createElement('option');
+      option.value = k;
+      option.text = k;
+      kendaraanSelect.add(option);
+    });
+
+    function hitungHarga() {
+      const kendaraanTerpilih = kendaraan[kendaraanSelect.value];
+      const jumlahUpgrade = parseInt(document.getElementById('upgrade').value);
+      const stiker = document.getElementById('stiker').checked ? 500 : 0;
+      
+      const total = kendaraanTerpilih + (jumlahUpgrade * 250) + stiker;
+      document.getElementById('totalHarga').textContent = `Total Harga: $${total.toLocaleString()}`;
+    }
+
+    function hitungHargaKomponen() {
+      const totalKomponen = parseFloat(document.getElementById('komponen').value);
+      if (!isNaN(totalKomponen) && totalKomponen > 0) {
+        const hargaKomponen = totalKomponen * 0.55;
+        document.getElementById('totalHargaKomponen').textContent = `Harga Komponen: $${hargaKomponen.toLocaleString()}`;
+      } else {
+        document.getElementById('totalHargaKomponen').textContent = 'Silakan masukkan total komponen yang valid.';
+      }
+    }
+
+    function toggleDarkMode() {
+      const body = document.body;
+      const containers = document.querySelectorAll('.container');
+      body.classList.toggle('dark-mode');
+      containers.forEach(container => {
+        container.classList.toggle('dark-mode');
+      });
+    }
+  </script>
+</body>
+</html>
